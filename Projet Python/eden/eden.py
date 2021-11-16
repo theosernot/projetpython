@@ -26,10 +26,8 @@
 
 import sys
 import pygame
-import select
 import socket
-import select
-import socket
+
 s = socket . socket ( socket . AF_INET6 , socket . SOCK_STREAM , 0)
 s. setsockopt ( socket . SOL_SOCKET , socket . SO_REUSEADDR , 1)
 s. bind (("", 9000) )
@@ -111,24 +109,9 @@ def init():
 
 init()
 
+sc , a = s.accept()
 
 while True:
-    c,b,n = select.select(l+[s],[],[])
-    for i in c:
-        if i == s:
-            sc , a = s.accept()
-            print("Nouveau joueur :", a)
-            l.append(sc)
-            m.append(sc.getpeername())
-            o+=1
-            ip=str(m[o-1][0])
-            port=str(m[o-1][1])
-            new = ("User " + "<" + ip + ">" + ":" + "<" + port + ">" + " connected\n")
-            dict2[str(port)] = sc
-            for k in l:
-                if k != sc:
-                    k.send(new.encode("utf-8"))
-        
     e = pygame.event.wait()
 
     # Check for exit
@@ -139,17 +122,23 @@ while True:
 
     # Check for wowoman movements
         if e.key == pygame.K_z:
+            sc.send("z".encode("utf-8"))
             woman_move = [ 0, -1 ]
-            pass
         elif e.key == pygame.K_s:
+            sc.send("s".encode("utf-8"))
             woman_move = [ 0, 1 ]
             pass
         elif e.key == pygame.K_q:
+            sc.send("q".encode("utf-8"))
+            #data = k.recv(2048)
             woman_move = [ -1, 0 ]
             pass
         elif e.key == pygame.K_d:
+            sc.send("d".encode("utf-8"))
+            #data = k.recv(2048)
             woman_move = [ 1, 0 ]
             pass
+            
 
     # Check for man movements
         elif e.key == pygame.K_UP:
